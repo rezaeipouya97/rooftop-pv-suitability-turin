@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>PV Suitability + LOD2.2 — Turin Centro Storico</title>
+  <link rel="stylesheet" href="style.css" />
+
+  <!-- MapLibre GL JS for the basemap -->
+  <link rel="stylesheet"
+        href="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css" />
+  <script src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
+
+  <!-- deck.gl bundle: includes Layers + MapboxOverlay -->
+  <script src="https://unpkg.com/deck.gl@9.0.36/dist.min.js"></script>
+</head>
+<body>
+
+<!-- Top bar -->
+<header id="topbar">
+  <div class="brand">
+    <strong>PV Suitability</strong>
+    <span class="sub">Turin centro storico — per-building cascade</span>
+  </div>
+
+  <div class="controls">
+    <label>Colour by:
+      <select id="colorBy">
+        <optgroup label="PV cascade (thesis headline)">
+          <option value="coef_vs_layer2_ratio" selected>coef_vs_layer2_ratio — 0.35 coefficient ÷ Layer 2 (per building)</option>
+          <option value="layer2_suitable_m2">layer2_suitable_m2 — classifier-corrected PV area (per building)</option>
+          <option value="layer3_kwh_yr">layer3_kwh_yr — gross annual irradiation × Layer 2 (per building)</option>
+          <option value="si_ann_kwh_m2_yr">si_ann_kwh_m2_yr — annual irradiation (per face)</option>
+        </optgroup>
+        <optgroup label="Classifier (per face)">
+          <option value="pv_verdict">pv_verdict — PV classifier result on this face</option>
+          <option value="pv_good_pct">pv_good_pct — % of face usable for PV</option>
+          <option value="pv_obs_pct">pv_obs_pct — % of face obstructed</option>
+        </optgroup>
+      </select>
+    </label>
+
+    <label>Style:
+      <select id="buildingStyle">
+        <option value="lod22" selected>LOD2.2 roof faces (per-face metric)</option>
+        <option value="lod13">LOD1.3 prism (flat-top blocks)</option>
+      </select>
+    </label>
+
+    <a class="ninja-link" href="https://ninja.cityjson.org/" target="_blank"
+       title="Open ninja.cityjson.org and drop in Turin_LOD2_deviation.city.json for the full LOD2.2 mesh with walls">
+      Open ninjaGL ↗
+    </a>
+  </div>
+</header>
+
+<!-- Map + side panel -->
+<main id="layout">
+  <div id="map"></div>
+
+  <aside id="panel">
+    <div id="panel-empty">
+      <h3>Click a building or face</h3>
+      <p>The side panel shows the four-layer PV cascade for that building
+         (0.35 coefficient → LOD1.3 effective → Layer 1 → Layer 2 classifier-corrected)
+         and the per-face PV classifier verdict.</p>
+      <p class="hint">Drag to rotate. Shift + drag to tilt. Scroll to zoom.</p>
+    </div>
+
+    <div id="panel-content" class="hidden">
+      <h3 id="panel-title">—</h3>
+      <p id="panel-rooftype" class="muted"></p>
+
+      <h4>PV cascade (this building)</h4>
+      <div id="panel-cascade"></div>
+
+      <h4>Quality / context</h4>
+      <table id="panel-table"></table>
+
+      <h4 id="panel-faces-header">Roof faces</h4>
+      <p class="hint">Click any face triangle on the map to see its details.</p>
+      <div id="panel-face"></div>
+    </div>
+  </aside>
+</main>
+
+<!-- Legend -->
+<div id="legend">
+  <div id="legend-title">0.35 coefficient ÷ Layer 2 ratio</div>
+  <div id="legend-gradient"></div>
+  <div id="legend-labels">
+    <span id="legend-min"></span>
+    <span id="legend-mid"></span>
+    <span id="legend-max"></span>
+  </div>
+</div>
+
+<script src="viewer.js"></script>
+</body>
+</html>

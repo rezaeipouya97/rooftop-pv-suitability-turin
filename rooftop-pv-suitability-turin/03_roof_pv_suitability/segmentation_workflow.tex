@@ -1,0 +1,50 @@
+% Roof-segmentation workflow diagram (Chapter 3).
+% Requires in your preamble:
+%   \usepackage{tikz}
+%   \usetikzlibrary{positioning, arrows.meta}
+% (graphicx is already in your preamble for \resizebox)
+%
+% NOTE: styles are named "joinbox" / "outbox" on purpose — "join" and "out"
+% are reserved keywords in TikZ and will error if used as style names.
+
+\begin{figure}[H]
+  \centering
+  \resizebox{\textwidth}{!}{%
+  \begin{tikzpicture}[
+      font=\small,
+      box/.style={draw, rounded corners=2pt, align=center, inner sep=5pt,
+                  minimum height=11mm, text width=26mm, line width=0.6pt},
+      aspect/.style={box, draw=green!55!black, fill=green!10},
+      slope/.style={box, draw=blue!55!black,  fill=blue!8},
+      joinbox/.style={box, draw=black!65, fill=black!5},
+      input/.style={box, draw=black!65, fill=black!10},
+      outbox/.style={box, draw=black!75, fill=black!12, font=\small\bfseries},
+      arr/.style={-{Latex[length=2.2mm]}, line width=0.7pt, draw=black!55},
+      garr/.style={arr, draw=green!50!black},
+      barr/.style={arr, draw=blue!55!black},
+    ]
+    \node[input] (dsm) at (0,0) {\textbf{5\,cm building DSM}\\\footnotesize building-only};
+    \node[aspect] (aspect) at (3.6, 1.5) {Aspect\\\footnotesize from DSM};
+    \node[aspect] (iseg)   at (7.2, 1.5) {Segment aspect\\\footnotesize \texttt{i.segment} (0.2)};
+    \node[aspect] (poly)   at (10.8,1.5) {Polygonize\\\footnotesize $\rightarrow$ vector segments};
+    \node[slope]  (slope)  at (3.6,-1.5) {Slope\\\footnotesize from DSM};
+    \node[joinbox] (median) at (10.8,-1.5){Median slope \& aspect\\\footnotesize per segment};
+    \node[joinbox] (classes)at (14.4,-1.5){Orientation classes\\\footnotesize flat $<8^{\circ}$, $30^{\circ}$ bins};
+    \node[outbox]  (res)    at (18.0,-1.5){$\approx$94{,}000 segments\\\footnotesize by orientation};
+
+    \draw[garr] (dsm) -- (aspect);
+    \draw[barr] (dsm) -- (slope);
+    \draw[garr] (aspect) -- (iseg);
+    \draw[garr] (iseg) -- (poly);
+    \draw[garr] (poly) -- (median);
+    \draw[barr] (slope) -- (median);
+    \draw[arr]  (median) -- (classes);
+    \draw[arr]  (classes) -- (res);
+  \end{tikzpicture}%
+  }
+  \caption{The roof-segmentation workflow. Green boxes use the aspect raster,
+  the blue box uses the slope raster, and the grey boxes are the joined result:
+  from the 5\,cm building DSM to $\approx$\,94{,}000 vector roof segments
+  grouped by orientation.}
+  \label{fig:seg-workflow}
+\end{figure}

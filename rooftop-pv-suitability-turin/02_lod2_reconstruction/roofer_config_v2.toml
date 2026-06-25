@@ -1,0 +1,22 @@
+# roofer_config_v2.toml
+# Actual geoflow-roofer configuration used to produce the final LOD2.2 / LOD1.3
+# reconstruction of the Turin historic centre (Turin_LOD2_Final).
+# Defaults are tuned for LiDAR; the values below were re-tuned for the denser,
+# noisier photogrammetric point cloud.
+
+polygon-source = "/data/footprints.gpkg"
+output-directory = "/data/roofer_output_v2"
+bld-class = 6
+grnd-class = 2
+complexity-factor = 0.45
+ceil-point-density = 10
+plane-detect-k = 35
+plane-detect-min-points = 100
+plane-detect-epsilon = 0.55
+lod11-fallback-planes = 5000
+lod13 = true
+lod22 = true
+clip-terrain = false
+
+[[pointclouds]]
+source = ["/data"]
